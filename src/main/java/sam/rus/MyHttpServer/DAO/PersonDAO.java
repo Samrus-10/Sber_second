@@ -27,6 +27,4 @@ public final class PersonDAO {
         }
         return result;
     }
-
-    public
 }

@@ -5,5 +5,6 @@ public class User {
     private String login;
     private String password;
     private Rule rule;
-    private String
+    private String token;
+    private String refreshToken;
 }

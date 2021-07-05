@@ -1,30 +1,44 @@
 package sam.rus.MyHttpServer.DAO;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import sam.rus.MyHttpServer.model.User;
+
+import java.io.IOException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class PersonDAO {
-    private Connection connection;
 
-    private PersonDAO(String urlBD, String user, String password) throws SQLException {
-        connection = DriverManager.getConnection(urlBD, user, password);
-    }
-    private void closeConnection(){
-        try {
-            this.connection.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    private PersonDAO() {
     }
 
-    public static PersonDAO getInstance(String urlBD, String user, String password) {
-        PersonDAO result = null;
-        try {
-            result = new PersonDAO(urlBD, user, password);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+    public static boolean enter(String login, String password) {
+        boolean result = false;
+        try (
+                Connection connection = ConnPoolDAO.getConnection();
+                PreparedStatement statement = connection.prepareStatement("select * from users where login = ? and password = ?;");
+        ) {
+            statement.setString(1, login);
+            statement.setString(2, password);
+            ResultSet resultSet = statement.executeQuery();
+            List<User> listUser = new ArrayList<>();
+            while (resultSet.next()) {
+                listUser.add(new User(
+                        resultSet.getLong("id"),
+                        resultSet.getString("login"),
+                        resultSet.getString("password"),
+                        resultSet.getString("rule"),
+                        resultSet.getString("token"),
+                        resultSet.getString("token_refresh")
+                        ));
+            }
+            if (listUser.size() == 1) {
+                result = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
     }
+
 }

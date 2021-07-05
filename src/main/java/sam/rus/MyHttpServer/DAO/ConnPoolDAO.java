@@ -1,25 +1,51 @@
 package sam.rus.MyHttpServer.DAO;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import org.h2.jdbcx.JdbcConnectionPool;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnPoolDAO {
-    private static final String JDBC_DRIVER;
-    private static final String JDBC_DB_URL;
-    private static final String JDBC_USER;
-    private static final String JDBC_PASS;
+public final class ConnPoolDAO {
+    private static  String JDBC_DRIVER;
+    private static  String JDBC_DB_URL;
+    private static  String JDBC_USER;
+    private static  String JDBC_PASS;
+    private static JdbcConnectionPool connectionPool;
 
-    static {
-        Properties properties = new Properties();
-        try {
-            properties.load(new FileInputStream("/Users/u19305165/IdeaProjects/soketExampleServer/src/main/resources/connectionPool.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private ConnPoolDAO() {
+
+    }
+
+
+    private static void init(){
+        Properties properties = ReaderBDProperties.getProperties("/home/sam/кайф/SberWork/TestBankAPI/Sber_second/src/main/resources/connectionPool.properties");
         JDBC_DRIVER = properties.getProperty("JDBC_DRIVER");
         JDBC_DB_URL= properties.getProperty("JDBC_DB_URL");
         JDBC_USER = properties.getProperty("JDBC_USER");
         JDBC_PASS = properties.getProperty("JDBC_PASS");
+        connectionPool = JdbcConnectionPool.create(JDBC_DB_URL, JDBC_USER, JDBC_PASS);
+    }
+
+    public static Connection getConnection() {
+        if (connectionPool == null) {
+            init();
+        }
+        Connection result = null;
+        try {
+            result = connectionPool.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static boolean closeConnectionPool() {
+        boolean result =  false;
+        if (connectionPool != null) {
+            connectionPool.dispose();
+            result = true;
+        }
+        return result;
     }
 }

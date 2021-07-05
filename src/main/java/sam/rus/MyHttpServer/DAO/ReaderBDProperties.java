@@ -4,20 +4,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class ReaderBDProperties {
-    private static final String pathToFileProperties = "/Users/u19305165/IdeaProjects/soketExampleServer/src/main/resources/connectionPool.properties";
+public final class ReaderBDProperties {
     private static Properties properties;
 
-    static {
+    public static Properties getProperties(String path){
         properties = new Properties();
-        properties.load(new FileInputStream(pathToFileProperties));
-    }
-
-    private void loadPropertiesFile(Properties properties) {
         try {
-            properties.load(new FileInputStream(pathToFileProperties));
+            properties.load(new FileInputStream(path));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return properties;
     }
+
 }

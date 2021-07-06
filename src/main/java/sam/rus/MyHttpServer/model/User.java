@@ -1,6 +1,6 @@
 package sam.rus.MyHttpServer.model;
 
-public class User {
+public class User implements JsonConvert {
     private long id;
     private java.lang.String login;
     private java.lang.String password;
@@ -18,6 +18,18 @@ public class User {
         this.rule = rule;
         this.token = token;
         this.refreshToken = refreshToken;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", rule='" + rule + '\'' +
+                ", token='" + token + '\'' +
+                ", refreshToken='" + refreshToken + '\'' +
+                '}';
     }
 
     public long getId() {

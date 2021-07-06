@@ -27,7 +27,6 @@ public class MyHttpTestHandler implements HttpHandler {
                 OutputStream out = exchange.getResponseBody();
         ) {
             exchange.sendResponseHeaders(200, htmlResponse.length());
-            //os.write(String.valueOf(htmlResponse.getBytes(StandardCharsets.UTF_8)));
             out.write(htmlResponse.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();

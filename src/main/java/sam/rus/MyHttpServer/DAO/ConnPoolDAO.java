@@ -19,7 +19,8 @@ public final class ConnPoolDAO {
 
 
     private static void init(){
-        Properties properties = ReaderBDProperties.getProperties("/home/sam/кайф/SberWork/TestBankAPI/Sber_second/src/main/resources/connectionPool.properties");
+        //Properties properties = ReaderBDProperties.getProperties("/home/sam/кайф/SberWork/TestBankAPI/Sber_second/src/main/resources/connectionPool.properties");
+        Properties properties = ReaderBDProperties.getProperties("/Users/u19305165/IdeaProjects/soketExampleServer/src/main/resources/connectionPool.properties");
         JDBC_DRIVER = properties.getProperty("JDBC_DRIVER");
         JDBC_DB_URL= properties.getProperty("JDBC_DB_URL");
         JDBC_USER = properties.getProperty("JDBC_USER");

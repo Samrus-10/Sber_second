@@ -1,6 +1,7 @@
 package sam.rus.MyHttpServer.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import sam.rus.MyHttpServer.model.Card;
@@ -8,9 +9,7 @@ import sam.rus.MyHttpServer.model.ErrorRequest;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class HttpJsonHandler implements HttpHandler {
     private List<Card> listOfCards = new ArrayList<>(Arrays.asList(

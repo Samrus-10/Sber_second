@@ -69,7 +69,6 @@ public final class TokenUtil {
         if (diffMinutes < Integer.parseInt(delta) && diffHours == 0) {
             result = true;
         }
-        //System.out.println("result: " + result);
         return result;
     }
 

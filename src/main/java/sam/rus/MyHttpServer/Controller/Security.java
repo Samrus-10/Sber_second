@@ -79,7 +79,7 @@ public class Security extends BasicAuthenticator {
     @Override
     public boolean checkCredentials(String login, String password) {
         System.out.printf("Login: %s, Password: %s\n", login, password);
-        return this.accessRule.checkAccess(login, password, this.realm);пеш
+        return this.accessRule.checkAccess(login, password, this.realm);
     }
 
 

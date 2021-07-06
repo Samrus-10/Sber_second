@@ -5,15 +5,17 @@ public class TokenDTO implements JsonConvert {
     private String data;
     private String exp;
     private String rule;
+    private String login;
 
     public TokenDTO() {
     }
 
-    public TokenDTO(long userId, String data, String exp, String rule) {
+    public TokenDTO(long userId, String data, String exp, String rule, String login) {
         this.userId = userId;
         this.data = data;
         this.exp = exp;
         this.rule = rule;
+        this.login = login;
     }
 
     @Override
@@ -56,5 +58,13 @@ public class TokenDTO implements JsonConvert {
 
     public void setRule(String rule) {
         this.rule = rule;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 }

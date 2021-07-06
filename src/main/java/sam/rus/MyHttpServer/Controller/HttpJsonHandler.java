@@ -22,7 +22,6 @@ public class HttpJsonHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        System.out.println("handle works...");
         if ("get".equalsIgnoreCase(httpExchange.getRequestMethod())) {
             getHandler(httpExchange);
         } else if ("post".equalsIgnoreCase(httpExchange.getRequestMethod())) {

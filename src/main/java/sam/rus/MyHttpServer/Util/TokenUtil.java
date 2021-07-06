@@ -19,7 +19,9 @@ public final class TokenUtil {
         String header = "{\"alg\":\"HS256\", \"typ\":\"JWT\"}";
         User user = PersonDAO.getUser(login, password);
         String nowData = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss"));
-        String payload = String.format("{\"userId\":\"%d\", \"data\":\"%s\",\"exp\":\"30\", \"rule\":\"%s\"}", user.getId(), nowData, user.getRule());
+        String payload = String.format(
+                "{\"userId\":\"%d\", \"data\":\"%s\",\"exp\":\"30\", \"rule\":\"%s\", \"login\":\"%s\"}",
+                user.getId(), nowData, user.getRule(), user.getLogin());
         String unsignedToken = Base64Coder.toEncoder(header) + "." + Base64Coder.toEncoder(payload);
         String signature = SHA256Coder.toCoderSHA256(unsignedToken, SECRET_KEY);
         String accessToken = unsignedToken + "." + Base64Coder.toEncoder(signature);
@@ -45,14 +47,14 @@ public final class TokenUtil {
         return checkTokenInBD(idUser, token, "token_refresh");
     }
 
-    public static boolean checkTimeOut(String delta, String time) {
+    public static boolean checkTimeOut(String delta, String date) {
         boolean result = false;
         SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
         String nowData = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss"));
         Date old = new Date();
         Date current = new Date();
         try {
-            old = format.parse(time);
+            old = format.parse(date);
             current = format.parse(nowData);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -71,13 +73,7 @@ public final class TokenUtil {
         return result;
     }
 
-    private static boolean checkNotChange(String[] split) {
-        String newUnsignedToken = split[0] + "." + split[1];
-        String newSignature = Base64Coder.toEncoder(SHA256Coder.toCoderSHA256(newUnsignedToken, SECRET_KEY));
-        return newSignature.equals(split[2]);
-    }
-
-    private static Map<String, String> parseTokken(String payload) {
+    public static Map<String, String> parseTokken(String payload) {
         String s = Base64Coder.toDecoder(payload);
         ToJSON<TokenDTO> tokenDTOToJSON = new ToJSON<>();
         TokenDTO jsonConvert = (TokenDTO) tokenDTOToJSON.convertToObject(s, new TokenDTO());
@@ -86,7 +82,14 @@ public final class TokenUtil {
         map.put("data", jsonConvert.getData());
         map.put("exp", jsonConvert.getExp());
         map.put("rule", jsonConvert.getRule());
+        map.put("login", jsonConvert.getLogin());
         return map;
+    }
+
+    private static boolean checkNotChange(String[] split) {
+        String newUnsignedToken = split[0] + "." + split[1];
+        String newSignature = Base64Coder.toEncoder(SHA256Coder.toCoderSHA256(newUnsignedToken, SECRET_KEY));
+        return newSignature.equals(split[2]);
     }
 
     private static boolean checkTokenInBD(String idUser, String token, String typeToken) {

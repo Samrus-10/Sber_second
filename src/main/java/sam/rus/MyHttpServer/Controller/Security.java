@@ -4,15 +4,18 @@ import com.sun.net.httpserver.BasicAuthenticator;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpPrincipal;
+import sam.rus.MyHttpServer.Util.AccessRule;
 import sam.rus.MyHttpServer.Util.TokenUtil;
 
 import java.util.Base64;
+import java.util.Map;
 
 public class Security extends BasicAuthenticator {
-    private boolean token;
+    private AccessRule accessRule;
 
-    public Security(String s) {
+    public Security(String s, AccessRule accessRule) {
         super(s);
+        this.accessRule = accessRule;
     }
 
     @Override
@@ -21,10 +24,32 @@ public class Security extends BasicAuthenticator {
         Headers requestHeaders = httpExchange.getRequestHeaders();
         String authorization = requestHeaders.getFirst("Authorization");
         if (authorization == null) {
-            String accessToken = requestHeaders.getFirst("Mytoken");
+            String accessToken = requestHeaders.getFirst("MyToken");
             if (accessToken != null) {
-                if (this.checkCredentials(accessToken)) {
-                    return new Success(new HttpPrincipal("token", this.realm));
+                System.out.println("Token");
+                if (TokenUtil.cheackAccessToken(accessToken)) {
+                    System.out.println("checkToken");
+                    String[] split = accessToken.split("\\.");
+                    Map<String, String> stringStringMap = TokenUtil.parseTokken(split[1]);
+                    String login = stringStringMap.get("login");
+                    String rule = stringStringMap.get("rule");
+                    String exp = stringStringMap.get("exp");
+                    String data = stringStringMap.get("data");
+                    if (TokenUtil.checkTimeOut(exp,data)) {
+                        System.out.println("Time in");
+                        if (this.checkCredentials(rule)) {
+                            return new Success(new HttpPrincipal(login, this.realm));
+                        } else {
+                            Headers responseHeaders = httpExchange.getResponseHeaders();
+                            responseHeaders.set("WWW-Authenticate", "Basic realm=\"" + this.realm + "\"");
+                            return new Retry(403);
+                        }
+                    } else {
+                        System.out.println("Time out");
+                        Headers responseHeaders = httpExchange.getResponseHeaders();
+                        responseHeaders.set("WWW-Authenticate", "Basic realm=\"" + this.realm + "\"");
+                        return new Retry(401);
+                    }
                 }
             }
             Headers responseHeaders = httpExchange.getResponseHeaders();
@@ -46,7 +71,7 @@ public class Security extends BasicAuthenticator {
                     return new Failure(401);
                 }
             } else {
-                return new Failure(401);
+                return new Failure(400);
             }
         }
     }
@@ -54,12 +79,12 @@ public class Security extends BasicAuthenticator {
     @Override
     public boolean checkCredentials(String login, String password) {
         System.out.printf("Login: %s, Password: %s\n", login, password);
-        return (login.equals("samy") && password.equals("1111"));
-        //return token;
+        return this.accessRule.checkAccess(login, password, this.realm);пеш
     }
 
-    public boolean checkCredentials(String token) {
-        System.out.println("here");
-        return TokenUtil.cheackAccessToken(token);
+
+    public boolean checkCredentials(String rule) {
+        System.out.println(rule);
+        return this.accessRule.checkAccess(rule, this.realm);
     }
 }

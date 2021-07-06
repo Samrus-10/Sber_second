@@ -8,6 +8,9 @@ import sam.rus.MyHttpServer.View.ViewClass;
 import sam.rus.MyHttpServer.model.TokenDTO;
 import sam.rus.MyHttpServer.model.User;
 
+import java.util.Arrays;
+import java.util.Map;
+
 public class App {
     public static void main(String[] args) {
 //        String sam = TokenUtil.creatToken("sam", "1111");
@@ -44,5 +47,7 @@ public class App {
 
         ViewClass.startServer();
         //System.out.println(Base64Coder.toEncoder("samy:1111"));
+
+        //System.out.println(login);
     }
 }

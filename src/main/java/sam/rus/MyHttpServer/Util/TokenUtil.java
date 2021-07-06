@@ -30,15 +30,11 @@ public final class TokenUtil {
         return String.format("%s---%s", accessToken, refreshToken);
     }
 
-    //public static String updateToken(){}
-
     public static boolean cheackAccessToken(String token) {
         String[] split = token.split("\\.");
         Map<String, String> valueFromToken = parseTokken(split[1]);
-        if (checkTokenInBD(valueFromToken.get("id_user"), token, "token_access")) {
-            if (checkNotChange(split)) {
-                return true;
-            }
+        if (checkNotChange(split)) {
+            return true;
         }
         return false;
     }
@@ -96,7 +92,7 @@ public final class TokenUtil {
         return refreshToken.equals(token);
     }
 
-    private static boolean deleteOldToken(String idUser){
+    private static boolean deleteOldToken(String idUser) {
         return PersonDAO.deleteToken(Integer.parseInt(idUser));
     }
 }

@@ -24,7 +24,7 @@ public class Security extends BasicAuthenticator {
         Headers requestHeaders = httpExchange.getRequestHeaders();
         String authorization = requestHeaders.getFirst("Authorization");
         if (authorization == null) {
-            String accessToken = requestHeaders.getFirst("MyToken");
+            String accessToken = requestHeaders.getFirst("AccessToken");
             if (accessToken != null) {
                 System.out.println("Token");
                 if (TokenUtil.cheackAccessToken(accessToken)) {
@@ -35,7 +35,7 @@ public class Security extends BasicAuthenticator {
                     String rule = stringStringMap.get("rule");
                     String exp = stringStringMap.get("exp");
                     String data = stringStringMap.get("data");
-                    if (TokenUtil.checkTimeOut(exp,data)) {
+                    if (TokenUtil.checkTimeOut(exp, data)) {
                         System.out.println("Time in");
                         if (this.checkCredentials(rule)) {
                             return new Success(new HttpPrincipal(login, this.realm));
@@ -45,6 +45,8 @@ public class Security extends BasicAuthenticator {
                             return new Retry(403);
                         }
                     } else {
+                        String refreshToken = requestHeaders.getFirst("RefreshToken");
+                        System.out.println(refreshToken);
                         System.out.println("Time out");
                         Headers responseHeaders = httpExchange.getResponseHeaders();
                         responseHeaders.set("WWW-Authenticate", "Basic realm=\"" + this.realm + "\"");

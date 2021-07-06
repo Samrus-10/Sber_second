@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sam.rus.MyHttpServer.Util.TokenUtil;
+import sam.rus.MyHttpServer.View.ViewClass;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,6 +18,11 @@ import java.util.stream.Collectors;
 public class MyHttpTestHandlerTest {
     private URL url;
     private HttpURLConnection httpURLConnection;
+
+    @BeforeClass
+    public static void startServer() {
+        ViewClass.startServer();
+    }
 
     @Before
     public void init() {
